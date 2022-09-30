@@ -6,7 +6,6 @@
 
 import threading
 import time
-import requests
 
 from server import Server
 

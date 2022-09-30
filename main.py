@@ -30,9 +30,7 @@ class Assesment:
         print(self.request_responses)
 
     def make_request(self):
-        request_response = requests.get(self.server_address)
-        response_json = request_response.json()
-        self.request_responses.append(response_json)
+        pass
 
 
 if __name__ == '__main__':

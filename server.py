@@ -11,7 +11,7 @@ class Server(ThreadingMixIn, HTTPServer):
         super().__init__(self.server_address, ServerHandler)
 
     def serve_forever(self, poll_interval: float = ...) -> None:
-        print("Server running on {}:{}".format(self.server_address[0], self.server_address[1]))
+        print(f"Server running on {self.server_address[0]}:{self.server_address[1]}")
         self.running = True
         super().serve_forever()
 
@@ -28,5 +28,3 @@ class ServerHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-type", "application/json")
         self.end_headers()
         self.wfile.write(bytes("{ \"success\": true }", "utf-8"))
-
-

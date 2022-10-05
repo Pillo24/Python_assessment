@@ -4,10 +4,10 @@
 # All responses need to be saved into request_responses List
 # Modify Assesment class as needed
 
+import requests
+from server import Server
 import threading
 import time
-
-from server import Server
 
 
 class Assesment:
@@ -16,8 +16,11 @@ class Assesment:
 
     def start(self):
         elapsed_time = time.time()
+        threads = []
         for i in range(0, 5):
-            self.make_request()
+            threads.append(threading.Thread(target=self.make_request))
+        self.thread_start(threads)
+        self.thread_join(threads)
         self.validate_responses()
         print("Elapsed time: {:.6f}s".format(time.time() - elapsed_time))
 
@@ -29,7 +32,17 @@ class Assesment:
         print(self.request_responses)
 
     def make_request(self):
-        pass
+        request_response = requests.get(self.server_address)
+        response_json = request_response.json()
+        self.request_responses.append(response_json)
+
+    def thread_start(self, threads):
+        for thread in threads:
+            thread.start()
+
+    def thread_join(self, threads):
+        for thread in threads:
+            thread.join()
 
 
 if __name__ == '__main__':

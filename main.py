@@ -6,7 +6,7 @@
 
 import threading
 import time
-
+import requests
 from server import Server
 
 
@@ -29,7 +29,9 @@ class Assesment:
         print(self.request_responses)
 
     def make_request(self):
-        pass
+        request_response = requests.get(self.server_address)
+        response_json = request_response.json()
+        self.request_responses.append(response_json)
 
 
 if __name__ == '__main__':

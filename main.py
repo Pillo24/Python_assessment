@@ -4,10 +4,11 @@
 # All responses need to be saved into request_responses List
 # Modify Assesment class as needed
 
-import threading
-import time
+import multiprocessing
 import requests
 from server import Server
+import threading
+import time
 
 
 class Assesment:
@@ -17,7 +18,12 @@ class Assesment:
     def start(self):
         elapsed_time = time.time()
         for i in range(0, 5):
-            self.make_request()
+            process = multiprocessing.Process(
+                target=self.make_request(),
+                args=()
+            )
+            process.start()
+            process.join()
         self.validate_responses()
         print("Elapsed time: {:.6f}s".format(time.time() - elapsed_time))
 

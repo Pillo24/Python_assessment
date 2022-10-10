@@ -3,8 +3,8 @@
 # You must make a request to server and per response, the response needs to be parsed from json
 # All responses need to be saved into request_responses List
 # Modify Assesment class as needed
-
-import threading
+import sys
+import threading, requests, concurrent.futures
 import time
 
 from server import Server
@@ -16,8 +16,10 @@ class Assesment:
 
     def start(self):
         elapsed_time = time.time()
-        for i in range(0, 5):
-            self.make_request()
+
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            [executor.submit(self.make_request) for _ in  range(5)]
+
         self.validate_responses()
         print("Elapsed time: {:.6f}s".format(time.time() - elapsed_time))
 
@@ -29,17 +31,25 @@ class Assesment:
         print(self.request_responses)
 
     def make_request(self):
-        pass
+        req = requests.get(self.server_address)
+        data = req.json()
+        self.request_responses.append(data['success'])
 
 
 if __name__ == '__main__':
+
     server = Server()
     server_thread = threading.Thread(target=server.serve_forever)
     server_thread.start()
+
     assesment = Assesment()
     try:
         assesment.start()
     except Exception as error:
         print(error)
+
     while server.running:
-        pass
+        server.shutdown()
+        server_thread.join()
+        server.server_close()
+

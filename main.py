@@ -6,15 +6,18 @@
 
 import threading
 import time
+import requests
 
-from server import Server
+from server import Server, ServerHandler
 
-
-class Assesment:
-    request_responses = []
+class Assesment(threading.Thread):
     server_address = "http://127.0.0.1:8000"
 
-    def start(self):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.request_responses = [] #reqest_responses is more like an instance attribute than lile a class one
+
+    def run(self):
         elapsed_time = time.time()
         for i in range(0, 5):
             self.make_request()
@@ -29,7 +32,9 @@ class Assesment:
         print(self.request_responses)
 
     def make_request(self):
-        pass
+        scall = requests.get(self.server_address)
+        scall_json = scall.json()
+        self.request_responses.append(scall_json)
 
 
 if __name__ == '__main__':

@@ -17,3 +17,7 @@ Generate an optimization using threads to reduce the running time from 5 seconds
   -	NameLastnameRole, Ie: JhonSmithSeAdv 
 -	Commit as much as you want, remember to show good practices. 
 -	Once you got the final commit, push it with title “Final Commit” and request a PR
+
+## Required packages
+This package uses the requests package to do calls to the server
+To install all the packages, execute pip install -r requirements.txt in the root folder of this project, after activating the virtual environment if the software is ran inside one.

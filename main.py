@@ -6,30 +6,46 @@
 
 import threading
 import time
-
-from server import Server
-
+import requests
+import concurrent.futures
+from server import Server, ServerHandler
 
 class Assesment:
-    request_responses = []
     server_address = "http://127.0.0.1:8000"
+
+    def __init__(self):
+        #threading.Thread.__init__(self)
+        self.request_responses = [] #reqest_responses is more like an instance attribute than lile a class one
 
     def start(self):
         elapsed_time = time.time()
-        for i in range(0, 5):
-            self.make_request()
+        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            jobs = {executor.submit(self.make_request, self.server_address): self.server_address for i in range(0, 5)}
+        for future in concurrent.futures.as_completed(jobs):
+            try:
+                data = future.result()
+            except Exception as exc:
+                print('%r generated an exception: %s' % (self.server_address, exc))
+            else:
+                self.request_responses.append(data)
         self.validate_responses()
         print("Elapsed time: {:.6f}s".format(time.time() - elapsed_time))
 
     def validate_responses(self):
         if (len(self.request_responses) == 5):
+            for response in self.request_responses:
+                assert response["success"]
+                assert response["request_num"] <= 5
+                assert response["final_request_num"] <= 5
             print("Success")
         else:
             print("Fail")
-        print(self.request_responses)
+        #print(self.request_responses)
 
-    def make_request(self):
-        pass
+    def make_request(self, address):
+        request_response = requests.get(address)
+        request_json = request_response.json()
+        return request_json
 
 
 if __name__ == '__main__':

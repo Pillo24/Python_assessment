@@ -2,7 +2,7 @@ from http.server import HTTPServer, SimpleHTTPRequestHandler
 from socketserver import ThreadingMixIn
 from time import sleep
 
-
+# https://docs.python.org/3/library/socketserver.html#socketserver.ThreadingMixIn
 class Server(ThreadingMixIn, HTTPServer):
     server_address = ('127.0.0.1', 8000)
     running = False
@@ -21,7 +21,6 @@ class Server(ThreadingMixIn, HTTPServer):
 
 
 class ServerHandler(SimpleHTTPRequestHandler):
-
     def do_GET(self) -> None:
         sleep(1)
         self.send_response(200)
